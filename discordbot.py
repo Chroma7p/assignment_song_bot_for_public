@@ -112,7 +112,7 @@ cogs=["kusocog",
 for c in cogs:
   bot.load_extension(c)
 
-TOKEN = 'ODMxMDY4ODk4NzYwODUxNDk3.YHP3OQ.QPGRzXKBX0TSUHvclB2CwBPMsHM'
+TOKEN = 'ここにトークンを入れる'
 
 
 
