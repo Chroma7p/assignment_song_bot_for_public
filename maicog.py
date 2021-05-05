@@ -2,6 +2,7 @@ from discord.ext import commands
 import random
 import csv
 import math
+import constread
 
 def rank(sco):
   if sco>=10050:
@@ -25,20 +26,38 @@ mai_table=[]
 mai_diff={"all":[],"None":[]}
 
 for i in range(100,151):
-  mai_diff[str(i/10)]=[]
+  mai_diff[i/10]=[]
+for i in range(10,16):
+  mai_diff[str(i)]=[]
+  mai_diff[str(i)+"+"]=[]
 
 with open("mai.csv",encoding="UTF-8")as f:
   csv_file=csv.reader(f)
 
   for l in csv_file:
     mai_table.append(l)
-    if l[2]=="None":
+    if l[3]=="None":
       mai_diff["None"].append(l)
     else:
-      mai_diff[l[3]].append(l)
+      mai_diff[float(l[3])].append(l)
+      lv=l[3][:2]
+      if int(l[3][3])>=7:
+        lv+="+"
+      mai_diff[lv].append(l)
     mai_diff["all"].append(l)
 
-
+def scorecalc(x):
+  for i in range(9700,10051,1):
+    if (i/10000)*rank(i)>=x:
+      return i/100  
+  else:
+    return "err"
+#要求された難易度幅から曲をランダムに選んで返す
+def songpick(d1,d2):
+  pick=[]
+  for i in range(int(d1*10),int(d2*10)+1):   
+    pick.extend(mai_diff[i/10])
+  return random.choice(pick)
 
 class maicog(commands.Cog,name="maimai"):
   def __init__(self,bot):
@@ -46,74 +65,44 @@ class maicog(commands.Cog,name="maimai"):
 
   @commands.command(description="maimaiの曲と譜面難度をランダムで提示(対応:13+~)")
   async def mai(self,ctx,diff="all"):
-    if diff=="all":
-        try:
-          out="  ".join(random.choice(mai_diff[diff]))
-        except:
-          out="ERROR!?"
-        await ctx.send(out)
-    elif diff[0]=="r":
-      try:
-        d=float(diff[1:])
-      except:
-        await ctx.send("ERROR! 目標値は13.289~16.384 or 265.78~337.68で入れてね")
-      if not(d>=265.78 and 337.68>=d or 13.289<=d and d<=16.384):
-        await ctx.send("ERROR! 目標値は13.289~16.384 or 265.78~337.68で入れてね")
-      else:
-        if d<100:
-          d*=20
-        pick=[]
-        for i in range(max(137,math.ceil(d/2.2512)),min(math.floor(d/1.94),151)):
-          pick.extend(mai_diff[str(i/10)])
-        song=random.choice(pick)
-        con=float(song[3])
-        for i in range(9700,10051,1):
-          if (i/10000)*rank(i)>=d/con:
-            sco=i/100
-            break
-        else:
-          sco="err"
-        await ctx.send("  ".join(song)+"  "+str(sco)+"%"+"("+str(round(sco*rank(sco*100)*con/100,1))+","+str(round(sco*rank(sco*100)*con/2000,2))+")")
-    elif len(diff)<5:
-      try:
-        out="  ".join(random.choice(mai_diff[diff]))
-      except:
-        out="ERROR! 定数は13.7~15.0で小数第一位まで入れてね"
+    mode,d1,d2=constread.read(diff,"mai")
+    if mode=="all" or mode=="pnt":  
+      out="  ".join(random.choice(mai_diff[d1]))
       await ctx.send(out)
-    elif diff[4]=="~":
-      pick=[]
-      if len(diff)==5:
-        try:
-          d=float(diff[:3])
-          for i in range(int(d*10),150):
-            pick.extend(mai_diff[str(i/10)])
-          await ctx.send("  ".join(random.choice(pick)))
-        except:
-          await ctx.send("ERROR! 定数は13.7~15.0で小数第一位まで入れてね")
+    elif mode=="err":
+      await ctx.send(d1)
+    elif mode=="r":
+        song=songpick(d1/10,d2/10)
+        con=float(song[3])
+        dif=float(diff[1:])
+        if dif<100:
+          dif*=20
+        sco=float(scorecalc(dif/con))
+        await ctx.send("  ".join(song)+"  "+str(sco)+"%"+"("+str(round(sco*rank(sco*100)*con/100,1))+","+str(round(sco*rank(sco*100)*con/2000,2))+")")
+    elif mode=="range":
+      await ctx.send("  ".join(songpick(d1,d2)))
+    elif mode=="level":
+      pk=mai_diff[d1]
+      if pk==[]:
+        await ctx.send("empty")
       else:
-        try:
-          d1=float(diff[:4])
-          d2=float(diff[5:])
-          for i in range(int(d1*10),int(d2*10)+1):
-            pick.extend(mai_diff[str(i/10)])
-          await ctx.send("  ".join(random.choice(pick)))
-        except:
-          await ctx.send("ERROR! 定数は13.7~15.0で小数第一位まで入れてね")
+        await ctx.send("  ".join(random.choice(mai_diff[d1])))
     else:
-      await ctx.send("ERROR! 定数は13.7~15.0で小数第一位まで入れてね")
+      await ctx.send("?????")
 
   @commands.command(description="指定した譜面定数の曲リストを返す")
   async def mailis(self,ctx,diff="15.0"):
     out=""
-    try:
-      for i in mai_diff[diff]:
-        out+=i[2]+" "+i[0]+" "+i[4]+"\n"
+    dif,er=constread.lis(diff,"mai")
+    if dif=="err":
+      await ctx.send(er)
+    else:
+      for i in mai_diff[dif]:
+        out+=i[1]+" "+i[2]+"\n"
       if out=="":
-        await ctx.send("ERROR")
+        await ctx.send("empty")
       else:
         await ctx.send(out)
-    except:
-      await ctx.send("ERROR")
 
 
 

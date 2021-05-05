@@ -103,8 +103,7 @@ dscrpt+="rxx.x:目標レート値指定、譜面に加えて目標スコアを�
 
 bot=commands.Bot(command_prefix='!',help_command=Help(),description=dscrpt)
 
-cogs=["kusocog",
-      "gekicog",
+cogs=["gekicog",
       "chucog",
       "maicog",
       "noscog"]
@@ -112,7 +111,7 @@ cogs=["kusocog",
 for c in cogs:
   bot.load_extension(c)
 
-TOKEN = 'ここにトークンを入れる'
+TOKEN = 'KOkOniTOkeNwoIreTenEKOkOniTOkeNwoIreTenEKOkOniTOkeNwoIreTenE'
 
 
 
