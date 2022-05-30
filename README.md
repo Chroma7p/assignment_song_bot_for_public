@@ -10,5 +10,4 @@
 
 
 
-discordbotが本体
-constreadが定数指定用モジュール
+discordbot.pyにトークン入れれば使えると思います
