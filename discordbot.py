@@ -4,6 +4,9 @@ from discord.ext import commands
 
 """借りた:https://gist.github.com/coolwind0202/e4efebdeda499d4498782b194f2d9be2#file-base-py"""
 
+TOKEN = 'ここにトークンを入れる'
+
+
 class Help(commands.HelpCommand):
     def __init__(self):
         super().__init__()
@@ -93,25 +96,26 @@ class Help(commands.HelpCommand):
             return f"{command.qualified_name} に {string} というサブコマンドは登録されていません。"
         return f"{command.qualified_name} にサブコマンドは登録されていません。"
 
-dscrpt=""
-dscrpt+="定数指定方法\n"
-dscrpt+="※※※注意:製作者がポンコツなので小数第一位まで入れないと今のところ動きません※※※\n"
-dscrpt+="xx.x:直接指定\n"
-dscrpt+="xx.x~xx.x:範囲指定\n"
-dscrpt+="xx.x~:下限指定\n"
-dscrpt+="rxx.x:目標レート値指定、譜面に加えて目標スコアを提示(基本的に最大の定数+2まで)"
+dscrpt="""定数指定方法
+xx.x:直接指定
+xx.x~xx.x:範囲指定
+xx.x~:下限指定
+rxx.x:目標レート値指定、譜面に加えて目標スコアを提示(基本的に最大の定数+2まで)"""
 
 bot=commands.Bot(command_prefix='!',help_command=Help(),description=dscrpt)
-
+cogfolder="cogs."
 cogs=["gekicog",
       "chucog",
       "maicog",
-      "noscog"]
+      "noscog",
+      "searchcog",
+      #"mycog",
+      ]
 
 for c in cogs:
-  bot.load_extension(c)
+  bot.load_extension(cogfolder+c)
 
-TOKEN = 'KOkOniTOkeNwoIreTenEKOkOniTOkeNwoIreTenEKOkOniTOkeNwoIreTenE'
+
 
 
 
