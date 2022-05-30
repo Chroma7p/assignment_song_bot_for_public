@@ -11,6 +11,8 @@ def rank(score):
     return 2.4
   else:
     return 2.0
+
+
 class noscog(commands.Cog,name="NOSTALGIA"):
   def __init__(self,bot):
     self.bot=bot

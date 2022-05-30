@@ -1,27 +1,27 @@
 from discord.ext import commands
 import random
-import constread
+from . import constread
 import csv
 
 
 #定数表をインポート
 geki_diff={"all":[],"None":[]}
-for i in range(100,150):
+for i in range(100,160):
   geki_diff[i/10]=[]
 
-for i in range(10,15):
+for i in range(10,16):
   geki_diff[str(i)]=[]
   geki_diff[str(i)+"+"]=[]
-
-with open("geki.csv",encoding="UTF-8")as f:
+#[name,diff,const genre,(humen)]
+with open("csv/geki.csv",encoding="UTF-8")as f:
   csv_file=csv.reader(f)
   for l in csv_file:
-    if l[3]=="None":
+    if l[5]=="None":
       geki_diff["None"].append(l)
     else:
-      geki_diff[float(l[3])].append(l)
-      lv=l[3][:2]
-      if int(l[3][3])>=7:
+      geki_diff[float(l[5])].append(l)
+      lv=l[5][:2]
+      if int(l[5][3])>=7:
         lv+="+"
       geki_diff[lv].append(l)
     geki_diff["all"].append(l)
@@ -62,7 +62,7 @@ class gekicog(commands.Cog,name="O.N.G.E.K.I."):
     elif mode=="r":
       song=songpick(d1,d2)
       d=float(diff[1:])
-      sco=scorecalc(d-float(song[3]))
+      sco=scorecalc(d-float(song[5]))
       await ctx.send("  ".join(song)+"  "+sco)
     elif mode=="range":
       await ctx.send("  ".join(songpick(d1,d2)))
@@ -85,12 +85,22 @@ class gekicog(commands.Cog,name="O.N.G.E.K.I."):
       await ctx.send(er)
     else:
       for i in geki_diff[dif]:
-        out+=i[1]+" "+i[2]+"\n"
+        out+=i[2]+" "+i[0]+"\n"
       if out=="":
         await ctx.send("empty")
       else:
         await ctx.send(out)
 
+  @commands.command(description="スコアからレート値を計算")
+  async def gcalc(self,ctx,score=1007500,cnst=0):
+    if score<970000:
+      await ctx.send("Please enter a score of 975,000 or higher...")
+    elif score<1000000:
+      await ctx.send(cnst+(score-970000)/20000)
+    elif score<1007500:
+      await ctx.send(cnst+1.5+(score-1000000)/1500)
+    else:
+      await ctx.sed(cnst+2)
 
 def setup(bot):
   print("gekicog setup OK")

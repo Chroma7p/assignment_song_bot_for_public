@@ -2,7 +2,7 @@ from discord.ext import commands
 import random
 import csv
 import math
-import constread
+from . import constread
 
 def rank(sco):
   if sco>=10050:
@@ -30,18 +30,18 @@ for i in range(100,151):
 for i in range(10,16):
   mai_diff[str(i)]=[]
   mai_diff[str(i)+"+"]=[]
-
-with open("mai.csv",encoding="UTF-8")as f:
+#[name,diff,const genre,(humen)]
+with open("csv/mai.csv",encoding="UTF-8")as f:
   csv_file=csv.reader(f)
 
   for l in csv_file:
     mai_table.append(l)
-    if l[3]=="None":
+    if l[2]=="None":
       mai_diff["None"].append(l)
     else:
-      mai_diff[float(l[3])].append(l)
-      lv=l[3][:2]
-      if int(l[3][3])>=7:
+      mai_diff[float(l[2])].append(l)
+      lv=l[2][:2]
+      if int(l[2][3])>=7:
         lv+="+"
       mai_diff[lv].append(l)
     mai_diff["all"].append(l)
@@ -73,7 +73,7 @@ class maicog(commands.Cog,name="maimai"):
       await ctx.send(d1)
     elif mode=="r":
         song=songpick(d1/10,d2/10)
-        con=float(song[3])
+        con=float(song[2])
         dif=float(diff[1:])
         if dif<100:
           dif*=20
@@ -98,7 +98,7 @@ class maicog(commands.Cog,name="maimai"):
       await ctx.send(er)
     else:
       for i in mai_diff[dif]:
-        out+=i[1]+" "+i[2]+"\n"
+        out+=i[0]+" "+i[1]+" "+i[4]+"\n"
       if out=="":
         await ctx.send("empty")
       else:

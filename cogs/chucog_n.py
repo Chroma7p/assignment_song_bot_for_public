@@ -1,7 +1,8 @@
+
 from discord.ext import commands
 import random
 import csv
-import constread
+from . import constread
 
 chu_table=[]
 chu_diff={"all":[],"None":[]}
@@ -13,7 +14,7 @@ for i in range(10,15):
   chu_diff[str(i)]=[]
   chu_diff[str(i)+"+"]=[]
 
-with open("chu.csv",encoding="UTF-8")as f:
+with open("csv/chu.csv",encoding="UTF-8")as f:
   csv_file=csv.reader(f)
 
   for l in csv_file:
@@ -90,6 +91,19 @@ class chucog(commands.Cog,name="CHUNITHM"):
         await ctx.send("empty")
       else:
         await ctx.send(out)
+
+  @commands.command(description="スコアからレート値を計算")
+  async def ccalc(self,ctx,score=1007500,cnst=0):
+    if score<975000:
+      await ctx.send("Please enter a score of 975,000 or higher...")
+    elif score<1000000:
+      await ctx.send(cnst+(score-975000)/25000)
+    elif score<1005000:
+      await ctx.send(cnst+1+(score-1000000)/10000)
+    elif score<1007500:
+      await ctx.send(cnst+1.5+(score-1005000)/5000)
+    else:
+      await ctx.sed(cnst+2)
 
 
 

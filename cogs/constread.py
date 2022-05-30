@@ -13,13 +13,10 @@ def mkconst(d):
   return round(float(d),1)
 
 def hei(a,x,b):
-  if a<=x and x<=b:
-    return True
-  else:
-    return False
+  return a<=x and x<=b
 
-modelrange={"geki":[12.7,14.9],"chu":[12.7,14.1],"mai":[13.7,15.0]}
-level=["10","10+","11+","12","12+","13","13+","14","14+"]
+modelrange={"geki":[12.7,15.4],"chu":[12.7,15.4],"mai":[13.7,15.0]}
+level=["10","10+","11+","12","12+","13","13+","14","14+","15"]
 
 def read(diff,model):
   lower=modelrange[model][0]
